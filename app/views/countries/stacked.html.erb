@@ -13,7 +13,7 @@
       title: { text: 'COVID-19 Cases and Deaths (Cumulative Totals) in <%= @reports.first.country.name %>' },
     <% end %>
 
-    xAxis: { categories: <%= @reports.order(:reported_at).distinct.pluck('date(reported_at)').to_json.html_safe %> },
+    xAxis: { categories: <%= @reports.order('date(reported_at)').distinct.pluck('date(reported_at)').to_json.html_safe %> },
     yAxis: {
       title: null,
     },
@@ -39,10 +39,10 @@
 
     series: [{
       name: 'Cases',
-      data: <%= @reports.order(:reported_at).group('date(reported_at)').sum(:cases).reduce([]) { |a, b| [*a, a.last.to_i + b[1]] }.to_json.html_safe %>
+      data: <%= @reports.order('date(reported_at)').group('date(reported_at)').sum(:cases).reduce([]) { |a, b| [*a, a.last.to_i + b[1]] }.to_json.html_safe %>
     }, {
       name: 'Deaths',
-      data: <%= @reports.order(:reported_at).group('date(reported_at)').sum(:deaths).reduce([]) { |a, b| [*a, a.last.to_i + b[1]] }.to_json.html_safe %>
+      data: <%= @reports.order('date(reported_at)').group('date(reported_at)').sum(:deaths).reduce([]) { |a, b| [*a, a.last.to_i + b[1]] }.to_json.html_safe %>
     }]
   });
 </script>
