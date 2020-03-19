@@ -35,7 +35,7 @@
               Highcharts.chart('cumulative-<%= country.id %>', {
                 title: { text: "" },
                 legend: { enabled: false },
-                <%= render 'areaspline', reports: country.reports.starting(@start_date).order(:reported_at), small: true %>
+                <%= render 'areaspline', reports: country.reports.starting(@start_date).order("date(reported_at)"), small: true %>
               });
             </script>
           </td>
@@ -47,7 +47,7 @@
               Highcharts.chart('acceleration-<%= country.id %>', {
                 title: { text: "" },
                 legend: { enabled: false },
-                <%= render 'areaspline', reports: country.reports.starting(@start_date).order(:reported_at), small: true %>
+                <%= render 'areaspline', reports: country.reports.starting(@start_date).order("date(reported_at)"), small: true %>
               });
             </script>
           </td>
@@ -61,7 +61,7 @@
               Highcharts.chart('cfr-<%= country.id %>', {
                 title: { text: "" },
                 legend: { enabled: false },
-                <%= render 'cfr', reports: country.reports.starting(@start_date).order(:reported_at), small: true %>
+                <%= render 'cfr', reports: country.reports.starting(@start_date).order("date(reported_at)"), small: true %>
               });
             </script>
           </td>
