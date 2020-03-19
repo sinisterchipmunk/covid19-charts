@@ -12,6 +12,8 @@ end
 
 group :production do
   gem 'pg'
+  gem 'dalli'
+  gem 'connection_pool'
 end
 
 # Use Puma as the app server
