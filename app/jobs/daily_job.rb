@@ -4,8 +4,15 @@ class DailyJob < ApplicationJob
   queue_as :default
 
   def perform(*args)
-    Dir.chdir Rails.root.join('data/COVID-19') do
-      raise "could not update data set" unless system "git", "pull"
+    if File.exist?(Rails.root.join('data/COVID-19'))
+      Dir.chdir Rails.root.join('data/COVID-19') do
+        raise "could not update data set" unless system "git", "pull"
+      end
+    else
+      FileUtils.mkdir_p(Rails.root.join('data'))
+      Dir.chdir Rails.root.join('data') do
+        raise "could not clone repo" unless system "git", "clone", "https://github.com/CSSEGISandData/COVID-19"
+      end
     end
     cases = {}
     deaths = {}
