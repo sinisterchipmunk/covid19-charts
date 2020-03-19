@@ -1,0 +1,88 @@
+<%= cache [params[:china], params[:start_date], Report.maximum(:reported_at)] do %>
+
+  <div id='container' style='height: <%= @countries.count * 20 %>px;'>
+  </div>
+
+  <script>
+    Highcharts.chart('container', {
+
+        chart: {
+            type: 'heatmap',
+            marginTop: 40,
+            marginBottom: 80,
+            plotBorderWidth: 1
+        },
+
+
+        title: {
+            text: 'COVID-19 Cases By Country and Date'
+        },
+
+        xAxis: {
+            categories: <%= @dates.to_json.html_safe %>
+        },
+
+        yAxis: {
+            categories: <%= @countries.map(&:name).to_json.html_safe %>,
+            title: null,
+            reversed: true
+        },
+
+        colorAxis: {
+            min: 0,
+            minColor: '#FFFFFF',
+            maxColor: Highcharts.getOptions().colors[0]
+        },
+
+        legend: {
+            align: 'right',
+            layout: 'vertical',
+            margin: 0,
+            verticalAlign: 'top',
+            y: 25,
+            symbolHeight: 280
+        },
+
+        tooltip: {
+            formatter: function () {
+                return '<b>' + this.series.yAxis.categories[this.point.y] + '</b> had <br><b>' +
+                    this.point.value + '</b> cases on <br><b>' + this.series.xAxis.categories[this.point.x] + '</b>';
+            }
+        },
+
+        credits: {
+          enabled: false
+        },
+
+        series: [{
+            name: 'COVID-19 Cases By Country and Date',
+            borderWidth: 1,
+            data: <%=
+              series = []
+
+              @dates.each_with_index do |date, date_idx|
+                @countries.each_with_index do |country, country_idx|
+                  cases = country.reports.where('reported_at >= ? and reported_at < ?', date, date + 1).sum(@metric)
+                  # series << [date_idx, country_idx, cases]
+                  if cases > 0
+                    series << { x: date_idx, y: country_idx, value: cases }
+                  # elsif country.reports.order(:reported_at).where('reported_at >= ?', @start_date).first.reported_at <= date
+                  #   series << { x: date_idx, y: country_idx, value: 0 }
+                  else
+                    { x: date_idx, y: country_idx, value: nil }
+                  end
+                end
+              end
+
+              series.to_json.html_safe
+            %>,
+            turboThreshold: 10000,
+            dataLabels: {
+                enabled: true,
+                color: '#000000'
+            }
+        }]
+    });
+  </script>
+
+<% end %>

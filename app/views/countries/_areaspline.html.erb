@@ -1,0 +1,81 @@
+chart: {
+  type: 'areaspline',
+  <% if defined?(small) && small %>
+    backgroundColor: null,
+    borderWidth: 0,
+    margin: [2, 0, 2, 0],
+    style: { overflow: 'visible' },
+    // small optimalization, saves 1-2 ms each sparkline
+    skipClone: true
+  <% end %>
+},
+
+xAxis: {
+  <% if defined?(small) && small %>
+    labels: { enabled: false }
+  <% else %>
+    categories: <%= reports.distinct.pluck('date(reported_at)').to_json.html_safe %>
+  <% end %>
+},
+
+yAxis: {
+  title: null,
+},
+
+plotOptions: {
+  area: {
+    stacking: 'normal',
+    lineColor: "#666666",
+    lineWidth: 1,
+    marker: {
+      lineWidth: 1,
+      lineColor: "#666666"
+    }
+  },
+
+  <% if defined?(small) && small %>
+    series: {
+      animation: false,
+      lineWidth: 1,
+      shadow: false,
+      states: {
+          hover: {
+              lineWidth: 1
+          }
+      },
+      marker: {
+          radius: 1,
+          states: {
+              hover: {
+                  radius: 2
+              }
+          }
+      },
+      fillOpacity: 0.25
+    }
+  <% end %>
+},
+
+tooltip: {
+  valuePrefix: '',
+  <% if defined?(small) && small %>
+    headerFormat: '',
+    pointFormat: '{series.name}: <b>{point.y}</b><br/>',
+    formatter: function(a) { return this.y.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); },
+    hideDelay: 0,
+    outside: true,
+    shared: true
+  <% else %>
+    split: true,
+  <% end %>
+},
+
+credits: { enabled: false },
+
+series: [{
+  name: 'Cases',
+  data: <%= reports.group('date(reported_at)').sum(:cases).reduce([]) { |a, b| [*a, a.last.to_i + b[1]] }.to_json.html_safe %>
+}, {
+  name: 'Deaths',
+  data: <%= reports.group('date(reported_at)').sum(:deaths).reduce([]) { |a, b| [*a, a.last.to_i + b[1]] }.to_json.html_safe %>
+}]

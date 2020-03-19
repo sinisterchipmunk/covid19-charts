@@ -1,0 +1,80 @@
+<%
+  cases  = reports.group('date(reported_at)').sum(:cases)
+  deaths = reports.group('date(reported_at)').sum(:deaths)
+%>
+
+chart: {
+  <% if defined?(small) && small %>
+    backgroundColor: null,
+    borderWidth: 0,
+    margin: [2, 0, 2, 0],
+    style: { overflow: 'visible' },
+    // small optimalization, saves 1-2 ms each sparkline
+    skipClone: true
+  <% end %>
+},
+
+xAxis: {
+  <% if defined?(small) && small %>
+    labels: { enabled: false }
+  <% else %>
+    categories: <%= deaths.keys.to_json.html_safe %>
+  <% end %>
+},
+
+yAxis: {
+  title: null,
+  labels: {
+    formatter: function(a) { return ""+(parseInt(a.value * 10000) / 100) + "%"; }
+  }
+},
+
+plotOptions: {
+  area: {
+    stacking: 'normal',
+    lineColor: "#666666",
+    lineWidth: 1,
+    marker: {
+      lineWidth: 1,
+      lineColor: "#666666"
+    }
+  },
+
+  <% if defined?(small) && small %>
+    series: {
+      animation: false,
+      lineWidth: 1,
+      shadow: false,
+      states: {
+          hover: {
+              lineWidth: 1
+          }
+      },
+      marker: {
+          radius: 1,
+          states: {
+              hover: {
+                  radius: 2
+              }
+          }
+      },
+      fillOpacity: 0.25
+    }
+  <% end %>
+},
+
+tooltip: {
+  formatter: function(a) { return ""+(parseInt(this.y * 10000) / 100) + "%"; },
+  <% if defined?(small) && small %>
+    hideDelay: 0,
+    outside: true,
+    shared: true
+  <% end %>
+},
+
+credits: { enabled: false },
+
+series: [{
+  name: 'Fatality Rate (%)',
+  data: <%= sd = sa = 0; deaths.map { |k, d| sa += cases[k].to_f; sd += d.to_f; sd / sa }.to_json.html_safe %>
+}]

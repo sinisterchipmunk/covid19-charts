@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  reported_at: 2020-02-24 13:32:09
+  country: one
+  cases: 1
+  deaths: 1
+
+two:
+  reported_at: 2020-02-24 13:32:09
+  country: two
+  cases: 1
+  deaths: 1

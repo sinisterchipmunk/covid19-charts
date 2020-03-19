@@ -1,0 +1,72 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  Click on a country chart to see it in more detail, or use the controls
+  above to view global information.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Country</th>
+      <th class='case'>Cases</th>
+      <th class='death'>Deaths</th>
+      <th class='recovery'>Recoveries</th>
+      <th style='width: 1in;'>Cumulative</th>
+      <!--<th style='width: 1in;'>Difference</th>-->
+      <th style='width: 1in;'>CFR</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @countries.each do |country| %>
+      <%= cache [@start_date, country] do %>
+        <tr>
+          <td><%= country.name %></td>
+          <td class='case'><%= country.reports.starting(@start_date).sum(:cases) %></td>
+          <td class='death'><%= country.reports.starting(@start_date).sum(:deaths) %></td>
+          <td class='recovery'><%= country.reports.starting(@start_date).sum(:recovered) %></td>
+          <td>
+            <%= link_to totals_country_path(country, china: params[:china], start_date: params[:start_date]) do %>
+              <div id='cumulative-<%= country.id %>' style='height: 2em;'></div>
+            <% end %>
+
+            <script>
+              Highcharts.chart('cumulative-<%= country.id %>', {
+                title: { text: "" },
+                legend: { enabled: false },
+                <%= render 'areaspline', reports: country.reports.starting(@start_date).order(:reported_at), small: true %>
+              });
+            </script>
+          </td>
+          <!--
+          <td>
+            <div id='acceleration-<%= country.id %>' style='height: 2em;'></div>
+
+            <script>
+              Highcharts.chart('acceleration-<%= country.id %>', {
+                title: { text: "" },
+                legend: { enabled: false },
+                <%= render 'areaspline', reports: country.reports.starting(@start_date).order(:reported_at), small: true %>
+              });
+            </script>
+          </td>
+          -->
+          <td>
+            <%= link_to cfr_country_path(country, china: params[:china], start_date: params[:start_date]) do %>
+              <div id='cfr-<%= country.id %>' style='height: 2em;'></div>
+            <% end %>
+
+            <script>
+              Highcharts.chart('cfr-<%= country.id %>', {
+                title: { text: "" },
+                legend: { enabled: false },
+                <%= render 'cfr', reports: country.reports.starting(@start_date).order(:reported_at), small: true %>
+              });
+            </script>
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

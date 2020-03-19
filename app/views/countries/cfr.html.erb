@@ -1,0 +1,49 @@
+<div id='container' style='height: 90%;'>
+</div>
+
+<script>
+  Highcharts.chart('container', {
+    chart: {
+      type: 'spline',
+    },
+
+    <% if !@country %>
+      title: { text: 'COVID-19 Fatality rate (total deaths / total cases) over time' },
+    <% else %>
+      title: { text: 'COVID-19 Fatality rate (total deaths / total cases) over time in <%= @country.name %>' },
+    <% end %>
+
+    xAxis: { categories: <%= @deaths.keys.to_json.html_safe %> },
+    yAxis: {
+      title: null,
+      labels: {
+        formatter: function(a) { return ""+(parseInt(a.value * 10000) / 100) + "%"; }
+      }
+    },
+
+    plotOptions: {
+      area: {
+        stacking: 'normal',
+        lineColor: "#666666",
+        lineWidth: 1,
+        marker: {
+          lineWidth: 1,
+          lineColor: "#666666"
+        }
+      }
+    },
+
+    tooltip: {
+      split: true,
+      valueSuffix: ' fatality rate',
+      formatter: function(a) { return ""+(parseInt(this.y * 10000) / 100) + "%"; }
+    },
+
+    credits: { enabled: false },
+
+    series: [{
+      name: 'Fatality Rate (%)',
+      data: <%= sd = sa = 0; @deaths.map { |k, d| sa += @cases[k].to_f; sd += d.to_f; sd / sa }.to_json.html_safe %>
+    }]
+  });
+</script>

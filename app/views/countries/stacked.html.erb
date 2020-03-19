@@ -1,0 +1,48 @@
+<div id='container' style='height: 90%;'>
+</div>
+
+<script>
+  Highcharts.chart('container', {
+    chart: {
+      type: 'areaspline',
+    },
+
+    <% if @reports.select(:country_id).distinct.count > 1 %>
+      title: { text: 'COVID-19 Cases and Deaths (Cumulative Totals)' },
+    <% else %>
+      title: { text: 'COVID-19 Cases and Deaths (Cumulative Totals) in <%= @reports.first.country.name %>' },
+    <% end %>
+
+    xAxis: { categories: <%= @reports.order(:reported_at).distinct.pluck('date(reported_at)').to_json.html_safe %> },
+    yAxis: {
+      title: null,
+    },
+
+    plotOptions: {
+      area: {
+        stacking: 'normal',
+        lineColor: "#666666",
+        lineWidth: 1,
+        marker: {
+          lineWidth: 1,
+          lineColor: "#666666"
+        }
+      }
+    },
+
+    tooltip: {
+      split: true,
+      valueSuffix: ' cases'
+    },
+
+    credits: { enabled: false },
+
+    series: [{
+      name: 'Cases',
+      data: <%= @reports.order(:reported_at).group('date(reported_at)').sum(:cases).reduce([]) { |a, b| [*a, a.last.to_i + b[1]] }.to_json.html_safe %>
+    }, {
+      name: 'Deaths',
+      data: <%= @reports.order(:reported_at).group('date(reported_at)').sum(:deaths).reduce([]) { |a, b| [*a, a.last.to_i + b[1]] }.to_json.html_safe %>
+    }]
+  });
+</script>
