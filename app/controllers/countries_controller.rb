@@ -35,14 +35,25 @@ class CountriesController < ApplicationController
     render :stacked
   end
 
-  def cfr
+  def acceleration
     if params[:id]
       @country = Country.find params[:id]
-      @cases  = @country.reports.starting(@start_date).group('date(reported_at)').sum(:cases)
-      @deaths = @country.reports.starting(@start_date).group('date(reported_at)').sum(:deaths)
+      @reports = @country.reports.starting(@start_date).group('date(reported_at)')
     else
-      @cases  = countries.reports.starting(@start_date).group('date(reported_at)').sum(:cases)
-      @deaths = countries.reports.starting(@start_date).group('date(reported_at)').sum(:deaths)
+      @reports = countries.reports.starting(@start_date).group('date(reported_at)')
+    end
+  end
+
+  def cfr
+    if params[:id]
+      @country    = Country.find params[:id]
+      @cases      = @country.reports.starting(@start_date).group('date(reported_at)').sum(:cases)
+      @deaths     = @country.reports.starting(@start_date).group('date(reported_at)').sum(:deaths)
+      @recoveries = @country.reports.starting(@start_date).group('date(reported_at)').sum(:recovered)
+    else
+      @cases      = countries.reports.starting(@start_date).group('date(reported_at)').sum(:cases)
+      @deaths     = countries.reports.starting(@start_date).group('date(reported_at)').sum(:deaths)
+      @recoveries = countries.reports.starting(@start_date).group('date(reported_at)').sum(:recovered)
     end
   end
 

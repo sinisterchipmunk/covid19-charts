@@ -5,11 +5,13 @@ Rails.application.routes.draw do
       get :heatmap
       get :cumulative
       get :cfr
+      get :acceleration
     end
 
     member do
       get :cfr
       get :totals
+      get :acceleration
     end
   end
 

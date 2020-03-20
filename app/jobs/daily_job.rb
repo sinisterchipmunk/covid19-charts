@@ -72,6 +72,7 @@ class DailyJob < ApplicationJob
 
     Report.transaction do
       Report.delete_all
+      prev_reports = {}
       all_rows.uniq.each do |row|
         date = row['Last Update']
         province_name = row[row.keys.detect { |k| k[/Provinc/] }]
@@ -91,6 +92,7 @@ class DailyJob < ApplicationJob
         province = Province.where(name: province_name,
                                   country: country).first_or_create!
         row['province_id'] = province.id
+        prev_report = prev_reports[province.id] ||= Report.new cases: 0, deaths: 0, recovered: 0
         
         # longitude: row['Longitude'],
         # latitude: row['Latitude']
@@ -99,20 +101,27 @@ class DailyJob < ApplicationJob
         report = province.reports.where(reported_at: date)
                                  .first_or_initialize(country: country)
         # CSV contains total counts, we prefer deltas, so need to solve for that.
-        report.cases     = row['Confirmed'].to_i - cases[province.id].to_i
-        report.deaths    = row['Deaths'].to_i    - deaths[province.id].to_i
-        report.recovered = row['Recovered'].to_i - recoveries[province.id].to_i
+        report.cases           = row['Confirmed'].to_i - cases[province.id].to_i
+        report.deaths          = row['Deaths'].to_i    - deaths[province.id].to_i
+        report.recovered       = row['Recovered'].to_i - recoveries[province.id].to_i
+        report.cum_cases       = row['Confirmed'].to_i
+        report.cum_deaths      = row['Deaths'].to_i
+        report.cum_recovered   = row['Recovered'].to_i
+        report.accel_cases     = report.cases     - prev_report.cases
+        report.accel_deaths    = report.deaths    - prev_report.deaths
+        report.accel_recovered = report.recovered - prev_report.recovered
         next if report.cases == 0 && report.deaths == 0 && report.recovered == 0
-        next if report.cases < 0
-        # p [country.id, province.id, cases[province.id], report.cases, row['Last Update'].to_f, row] if country.name[/Korea/]
+        next if report.cases < 0 # means the data point is probably out of order, somehow, or is a duplicate
+        # p [cases[province.id], [report.cases, prev_report.cases], report.cum_cases, report.accel_cases, row] if country.name[/Italy/]
         cases[province.id] = row['Confirmed'].to_i
         deaths[province.id] = row['Deaths'].to_i
         recoveries[province.id] = row['Recovered'].to_i
         report.save!
+        prev_reports[province.id] = report
 
-        # sanity check
+        # integrity check
         sum = province.reports.where("reported_at <= ?", report.reported_at).sum(:cases)
-        unless sum == row['Confirmed'].to_i
+        unless sum == row['Confirmed'].to_i && sum == report.cum_cases
           raise "Sum mismatch: #{sum} != #{row.inspect} (#{country.id} => #{report.cases})"
         end
       end

@@ -1,6 +1,6 @@
 <%
-  cases  = reports.group('date(reported_at)').sum(:cases)
-  deaths = reports.group('date(reported_at)').sum(:deaths)
+  cases  = reports.sum(:cases)
+  deaths = reports.sum(:deaths)
 %>
 
 chart: {

@@ -1,0 +1,53 @@
+<div id='container' style='height: 90%;'>
+</div>
+
+<script>
+  Highcharts.chart('container', {
+    chart: {
+      type: 'areaspline',
+    },
+
+    <% if !@country %>
+      title: { text: 'COVID-19 Acceleration (reports today - reports yesterday) over time' },
+    <% else %>
+      title: { text: 'COVID-19 Acceleration (reports today - reports yesterday) over time in <%= @country.name %>' },
+    <% end %>
+
+    xAxis: { categories: <%= @reports.sum(:cases).keys.to_json.html_safe %> },
+    yAxis: {
+      title: null,
+    },
+
+    plotOptions: {
+      area: {
+        stacking: 'normal',
+        lineColor: "#666666",
+        lineWidth: 1,
+        marker: {
+          lineWidth: 1,
+          lineColor: "#666666"
+        }
+      }
+    },
+
+    tooltip: {
+      split: true,
+    },
+
+    credits: { enabled: false },
+
+    series: [{
+      name: 'Cases Acceleration',
+      data: <%= @reports.sum(:accel_cases).values.to_json.html_safe %>,
+      color: '#CC9900'
+    }, {
+      name: 'Recoveries Acceleration',
+      data: <%= @reports.sum(:accel_recovered).values.to_json.html_safe %>,
+      color: '#00AA00'
+    }, {
+      name: 'Deaths Acceleration',
+      data: <%= @reports.sum(:accel_deaths).values.to_json.html_safe %>,
+      color: '#AA0000'
+    }],
+  });
+</script>

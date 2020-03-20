@@ -17,13 +17,14 @@
     <h2>
       <%= link_to 'All Countries', countries_path %> |
       <% if @country %>
-        <%= @country.name %>:
-        <%= link_to 'Totals', totals_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
-        <%= link_to 'Fatalities %', cfr_country_path(@country, china: params[:china], start_date: params[:start_date]) %>
+        <%= link_to "#{@country.name} Cumulative", totals_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
+        <%= link_to "#{@country.name} Acceleration", acceleration_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
+        <%= link_to "#{@country.name} Fatalities %", cfr_country_path(@country, china: params[:china], start_date: params[:start_date]) %>
       <% else %>
         <%= link_to 'Heatmap', heatmap_countries_path(china: params[:china], start_date: params[:start_date]) %> |
-        <%= link_to 'Total Cumulative', cumulative_countries_path(china: params[:china], start_date: params[:start_date]) %> |
-        <%= link_to 'Total Fatalities %', cfr_countries_path(china: params[:china], start_date: params[:start_date]) %>
+        <%= link_to 'Global Cumulative', cumulative_countries_path(china: params[:china], start_date: params[:start_date]) %> |
+        <%= link_to "Global Acceleration", acceleration_countries_path(china: params[:china], start_date: params[:start_date]) %> |
+        <%= link_to 'Global Fatalities %', cfr_countries_path(china: params[:china], start_date: params[:start_date]) %>
       <% end %>
     </h2>
     <h3>

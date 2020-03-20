@@ -57,11 +57,12 @@ plotOptions: {
 },
 
 tooltip: {
-  valuePrefix: '',
+  valuePrefix: <%= (defined?(prefix) ? prefix : "").to_json.html_safe %>,
+  valueSuffix: <%= (defined?(suffix) ? suffix : "").to_json.html_safe %>,
   <% if defined?(small) && small %>
     headerFormat: '',
     pointFormat: '{series.name}: <b>{point.y}</b><br/>',
-    formatter: function(a) { return this.y.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); },
+    valueFormatter: function(a) { return this.y.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); },
     hideDelay: 0,
     outside: true,
     shared: true
@@ -71,11 +72,3 @@ tooltip: {
 },
 
 credits: { enabled: false },
-
-series: [{
-  name: 'Cases',
-  data: <%= reports.group('date(reported_at)').sum(:cases).reduce([]) { |a, b| [*a, a.last.to_i + b[1]] }.to_json.html_safe %>
-}, {
-  name: 'Deaths',
-  data: <%= reports.group('date(reported_at)').sum(:deaths).reduce([]) { |a, b| [*a, a.last.to_i + b[1]] }.to_json.html_safe %>
-}]

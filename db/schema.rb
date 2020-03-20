@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_18_211715) do
+ActiveRecord::Schema.define(version: 2020_03_20_152724) do
 
   create_table "countries", force: :cascade do |t|
     t.string "name"
@@ -37,6 +37,12 @@ ActiveRecord::Schema.define(version: 2020_03_18_211715) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "recovered"
     t.integer "province_id"
+    t.integer "cum_cases"
+    t.integer "cum_deaths"
+    t.integer "cum_recovered"
+    t.integer "accel_cases"
+    t.integer "accel_deaths"
+    t.integer "accel_recovered"
     t.index ["country_id"], name: "index_reports_on_country_id"
     t.index ["province_id"], name: "index_reports_on_province_id"
   end
