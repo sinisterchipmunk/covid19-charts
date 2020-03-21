@@ -13,6 +13,7 @@
       <th class='death'>Deaths</th>
       <th class='recovery'>Recoveries</th>
       <th style='width: 1in;'>Cumulative</th>
+      <th style='width: 1in;'>Cases Per Million</th>
       <th style='width: 1in;'>Acceleration</th>
       <th style='width: 1in;'>Fatality %</th>
     </tr>
@@ -52,6 +53,16 @@
                 <%= render 'areaspline', reports: reports, small: true %>
               });
             </script>
+          </td>
+          <td>
+            <% if country.population %>
+              <%= link_to cumulative_per_million_country_path(country, china: params[:china], start_date: params[:start_date]) do %>
+                <div id='cum_per_mil-<%= country.id %>' style='height: 2em;'></div>
+              <% end %>
+              <%= render 'cumulative_per_million', country: country, population: country.population, reports: reports, small: true %>
+            <% else %>
+              <b>N/A</b>
+            <% end %>
           </td>
           <td>
             <%= link_to acceleration_country_path(country, china: params[:china], start_date: params[:start_date]) do %>

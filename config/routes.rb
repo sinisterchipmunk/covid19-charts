@@ -6,12 +6,14 @@ Rails.application.routes.draw do
       get :cumulative
       get :cfr
       get :acceleration
+      get :cumulative_per_million
     end
 
     member do
       get :cfr
       get :totals
       get :acceleration
+      get :cumulative_per_million
     end
   end
 

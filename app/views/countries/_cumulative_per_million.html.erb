@@ -1,0 +1,24 @@
+<% pop_quotient = population / 1_000_000.0 %>
+
+<script>
+  Highcharts.chart('cum_per_mil-<%= country ? country.id : 0 %>', {
+    title: { text: <%= (defined?(title) ? title : '').to_json.html_safe %> },
+    <% if defined?(small) && small %>
+      legend: { enabled: false },
+    <% end %>
+    series: [{
+      name: 'Cases per Million',
+      data: <%= reports.sum(:cum_cases).values.map { |v| ('%0.2f' % (v / pop_quotient)).to_f }.to_json.html_safe %>,
+      color: '#CC9900'
+    }, {
+      name: 'Recoveries per Million',
+      data: <%= reports.sum(:cum_recovered).values.map { |v| ('%0.2f' % (v / pop_quotient)).to_f }.to_json.html_safe %>,
+      color: '#00AA00'
+    }, {
+      name: 'Deaths per Million',
+      data: <%= reports.sum(:cum_deaths).values.map { |v| ('%0.2f' % (v / pop_quotient)).to_f }.to_json.html_safe %>,
+      color: '#AA0000'
+    }],
+    <%= render 'areaspline', reports: reports, small: defined?(small) ? small : false %>
+  });
+</script>

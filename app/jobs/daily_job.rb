@@ -73,6 +73,7 @@ class DailyJob < ApplicationJob
     Report.transaction do
       Report.delete_all
       prev_reports = {}
+      missing_countries = []
       all_rows.uniq.each do |row|
         date = row['Last Update']
         province_name = row[row.keys.detect { |k| k[/Provinc/] }]
@@ -81,14 +82,47 @@ class DailyJob < ApplicationJob
 
         # special case country names
         country_name.gsub! /\*/, ''
-        country_name = 'South Korea' if country_name == 'Korea, South'
-        country_name = 'South Korea' if country_name == 'Republic of Korea'
-        country_name = 'Vietnam'     if country_name == 'Viet Nam'
-        country_name = 'Iran'        if country_name == 'Iran (Islamic Republic of)'
-        country_name = 'Hong Kong'   if country_name == 'Hong Kong SAR'
-        country_name = 'China'       if country_name == 'Mainland China'
+        country_name = case country_name
+                       when 'Korea, South'                   then 'South Korea'
+                       when 'Republic of Korea'              then 'South Korea'
+                       when 'Viet Nam'                       then 'Vietnam'
+                       when 'Iran (Islamic Republic of)'     then 'Iran'
+                       when 'Hong Kong SAR'                  then 'Hong Kong'
+                       when 'Mainland China'                 then 'China'
+                       when 'US'                             then 'United States'
+                       when 'UK'                             then 'United Kingdom'
+                       when 'North Ireland'                  then 'Northern Ireland'
+                       when 'Republic of Ireland'            then 'Ireland'
+                       when 'Saint Martin'                   then 'St. Martin'
+                       when 'Taipei and environs'            then 'Taiwan'
+                       when 'Macao SAR'                      then 'Macau'
+                       when 'occupied Palestinian territory' then 'Palestine'
+                       when 'The Gambia'                     then 'Gambia'
+                       when 'Gambia, The'                    then 'Gambia'
+                       when 'The Bahamas'                    then 'Bahamas'
+                       when 'Bahamas, The'                   then 'Bahamas'
+                       when 'Republic of the Congo'          then 'DR Congo'
+                       when 'Congo (Brazzaville)'            then 'DR Congo'
+                       when 'Guernsey'                       then 'Guernsey and Jersey'
+                       when 'Jersey'                         then 'Guernsey and Jersey'
+                       when 'Russian Federation'             then 'Russia'
+                       when 'Republic of Moldova'            then 'Moldova'
+                       when "Congo (Kinshasa)"               then 'DR Congo'
+                       when 'Czechia'                        then 'Czech Republic'
+                       when "Cote d'Ivoire"                  then 'Ivory Coast'
+                       when 'Curacao'                        then 'Curaçao'
+                       when 'Reunion'                        then 'Réunion'
+                       else country_name
+                       end
 
-        country = Country.where(name: country_name).first_or_create!
+        country = Country.where(name: country_name).first
+        if !country
+          unless missing_countries.include?(country_name)
+            missing_countries << country_name
+            warn "Country not found: #{country_name.inspect}"
+          end
+          next
+        end
         province = Province.where(name: province_name,
                                   country: country).first_or_create!
         row['province_id'] = province.id
@@ -125,6 +159,8 @@ class DailyJob < ApplicationJob
           raise "Sum mismatch: #{sum} != #{row.inspect} (#{country.id} => #{report.cases})"
         end
       end
+
+      raise 'one or more countries is missing' if missing_countries.any?
 
       # cache busting and cleanup
       Country.all.each do |c|

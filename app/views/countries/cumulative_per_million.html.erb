@@ -1,0 +1,12 @@
+<p>
+  Assuming <b><%= @country ? @country.name : "the world" %></b> has a population of
+  <b><%= number_to_human @population %></b>.
+</p>
+
+<div id='cum_per_mil-<%= @country ? @country.id : 0 %>' style='height: 90%;'>
+</div>
+
+<%= render 'cumulative_per_million', population: @population,
+                                     country: @country,
+                                     reports: @reports,
+                                     title: "Cumulative Totals Per Million People#{@country && " in #{@country.name}"}" %>

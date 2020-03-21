@@ -35,6 +35,17 @@ class CountriesController < ApplicationController
     render :stacked
   end
 
+  def cumulative_per_million
+    if params[:id]
+      @country = Country.find params[:id]
+      @population = @country.population
+      @reports = @country.reports.starting(@start_date).group('date(reported_at)')
+    else
+      @reports = countries.reports.starting(@start_date).group('date(reported_at)')
+      @population = 7_800_000_000
+    end
+  end
+
   def acceleration
     if params[:id]
       @country = Country.find params[:id]
