@@ -1,0 +1,56 @@
+<div id='container' style='height: 90%;'>
+</div>
+
+<% reports = @reports.order('date(reported_at)').group('date(reported_at)') %>
+
+<script>
+  Highcharts.chart('container', {
+    chart: {
+      type: 'areaspline',
+    },
+
+    <% if @country.nil? %>
+      title: { text: 'COVID-19 Cases Reported Per Day' },
+    <% else %>
+      title: { text: 'COVID-19 Cases Reported Per Day in <%= @country.name %>' },
+    <% end %>
+
+    xAxis: { categories: <%= @reports.order('date(reported_at)').distinct.pluck('date(reported_at)').to_json.html_safe %> },
+    yAxis: {
+      title: null,
+    },
+
+    plotOptions: {
+      area: {
+        stacking: 'normal',
+        lineColor: "#666666",
+        lineWidth: 1,
+        marker: {
+          lineWidth: 1,
+          lineColor: "#666666"
+        }
+      }
+    },
+
+    tooltip: {
+      split: true,
+      valueSuffix: ' cases'
+    },
+
+    credits: { enabled: false },
+
+    series: [{
+      name: 'Cases',
+      data: <%= reports.sum(:cases).values.to_json.html_safe %>,
+      color: '#CC9900'
+    }, {
+      name: 'Recoveries',
+      data: <%= reports.sum(:recovered).values.to_json.html_safe %>,
+      color: '#00AA00'
+    }, {
+      name: 'Deaths',
+      data: <%= reports.sum(:deaths).values.to_json.html_safe %>,
+      color: '#AA0000'
+    }]
+  });
+</script>

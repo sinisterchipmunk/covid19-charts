@@ -46,6 +46,15 @@ class CountriesController < ApplicationController
     end
   end
 
+  def cases_per_day
+    if params[:id]
+      @country = Country.find params[:id]
+      @reports = @country.reports.starting(@start_date).group('date(reported_at)')
+    else
+      @reports = countries.reports.starting(@start_date).group('date(reported_at)')
+    end
+  end
+
   def acceleration
     if params[:id]
       @country = Country.find params[:id]

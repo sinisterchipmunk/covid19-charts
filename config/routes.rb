@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       get :cfr
       get :acceleration
       get :cumulative_per_million
+      get :cases_per_day
     end
 
     member do
@@ -14,6 +15,7 @@ Rails.application.routes.draw do
       get :totals
       get :acceleration
       get :cumulative_per_million
+      get :cases_per_day
     end
   end
 

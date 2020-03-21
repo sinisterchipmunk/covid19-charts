@@ -28,12 +28,14 @@
         <% if @country.population %>
           <%= link_to "#{@country.name} Cum. Per Million", cumulative_per_million_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
         <% end %>
+        <%= link_to "#{@country.name} Cases Per Day", cases_per_day_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
         <%= link_to "#{@country.name} Acceleration", acceleration_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
         <%= link_to "#{@country.name} Fatalities %", cfr_country_path(@country, china: params[:china], start_date: params[:start_date]) %>
       <% else %>
         <%= link_to 'Heatmap', heatmap_countries_path(china: params[:china], start_date: params[:start_date]) %> |
         <%= link_to 'Global Cumulative', cumulative_countries_path(china: params[:china], start_date: params[:start_date]) %> |
         <%= link_to "Global Cum. Cases Per Million", cumulative_per_million_countries_path(china: params[:china], start_date: params[:start_date]) %> |
+        <%= link_to 'Global Cases Per Day', cases_per_day_countries_path(china: params[:china], start_date: params[:start_date]) %> |
         <%= link_to "Global Acceleration", acceleration_countries_path(china: params[:china], start_date: params[:start_date]) %> |
         <%= link_to 'Global Fatalities %', cfr_countries_path(china: params[:china], start_date: params[:start_date]) %>
       <% end %>

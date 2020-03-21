@@ -14,7 +14,8 @@
       <th class='recovery'>Recoveries</th>
       <th style='width: 1in;'>Cumulative</th>
       <th style='width: 1in;'>Cases Per Million</th>
-      <th style='width: 1in;'>Acceleration</th>
+      <th style='width: 1in;'>Cases Per Day</th>
+      <th style='width: 1in;'>Change in Cases/Day</th>
       <th style='width: 1in;'>Fatality %</th>
     </tr>
   </thead>
@@ -63,6 +64,32 @@
             <% else %>
               <b>N/A</b>
             <% end %>
+          </td>
+          <td>
+            <%= link_to cases_per_day_country_path(country, china: params[:china], start_date: params[:start_date]) do %>
+              <div id='cases_per_day-<%= country.id %>' style='height: 2em;'></div>
+            <% end %>
+
+            <script>
+              Highcharts.chart('cases_per_day-<%= country.id %>', {
+                title: { text: "" },
+                legend: { enabled: false },
+                series: [{
+                  name: 'Cases',
+                  data: <%= reports.sum(:cases).values.to_json.html_safe %>,
+                  color: '#CC9900'
+                }, {
+                  name: 'Recoveries',
+                  data: <%= reports.sum(:recovered).values.to_json.html_safe %>,
+                  color: '#00AA00'
+                }, {
+                  name: 'Deaths',
+                  data: <%= reports.sum(:deaths).values.to_json.html_safe %>,
+                  color: '#AA0000'
+                }],
+                <%= render 'areaspline', reports: reports, small: true %>
+              });
+            </script>
           </td>
           <td>
             <%= link_to acceleration_country_path(country, china: params[:china], start_date: params[:start_date]) do %>

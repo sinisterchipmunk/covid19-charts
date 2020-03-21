@@ -112,6 +112,7 @@ class DailyJob < ApplicationJob
                        when "Cote d'Ivoire"                  then 'Ivory Coast'
                        when 'Curacao'                        then 'Curaçao'
                        when 'Reunion'                        then 'Réunion'
+                       when 'Cabo Verde'                     then 'Cape Verde'
                        else country_name
                        end
 
