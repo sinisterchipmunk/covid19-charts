@@ -39,9 +39,9 @@ class CountriesController < ApplicationController
     if params[:id]
       @country = Country.find params[:id]
       @population = @country.population
-      @reports = @country.reports.starting(@start_date).group('date(reported_at)')
+      @reports = @country.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)')
     else
-      @reports = countries.reports.starting(@start_date).group('date(reported_at)')
+      @reports = countries.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)')
       @population = 7_800_000_000
     end
   end
@@ -49,18 +49,18 @@ class CountriesController < ApplicationController
   def cases_per_day
     if params[:id]
       @country = Country.find params[:id]
-      @reports = @country.reports.starting(@start_date).group('date(reported_at)')
+      @reports = @country.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)')
     else
-      @reports = countries.reports.starting(@start_date).group('date(reported_at)')
+      @reports = countries.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)')
     end
   end
 
   def acceleration
     if params[:id]
       @country = Country.find params[:id]
-      @reports = @country.reports.starting(@start_date).group('date(reported_at)')
+      @reports = @country.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)')
     else
-      @reports = countries.reports.starting(@start_date).group('date(reported_at)')
+      @reports = countries.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)')
     end
   end
 
