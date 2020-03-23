@@ -113,6 +113,7 @@ class DailyJob < ApplicationJob
                        when 'Curacao'                        then 'Curaçao'
                        when 'Reunion'                        then 'Réunion'
                        when 'Cabo Verde'                     then 'Cape Verde'
+                       when 'Timor-Leste'                    then 'East Timor'
                        else country_name
                        end
 
