@@ -13,7 +13,9 @@ class DailyJob < ApplicationJob
       FileUtils.mkdir_p(Rails.root.join('data'))
       Dir.chdir Rails.root.join('data') do
         raise "could not clone repo" unless system "git", "clone", "https://github.com/CSSEGISandData/COVID-19"
-        raise "could not checkout branch" unless system "git", "checkout", "origin/web-data"
+        Dir.chdir Rails.root.join('data/COVID-19') do
+          raise "could not checkout branch" unless system "git", "checkout", "origin/web-data"
+        end
       end
     end
 
