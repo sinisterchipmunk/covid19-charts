@@ -1,6 +1,6 @@
 <p id="notice"><%= notice %></p>
 
-<p>
+<p class='center'>
   Click on a country chart to see it in more detail, or use the controls
   above to view global information.
 </p>
@@ -19,7 +19,9 @@
   </thead>
 
   <tbody>
-    <%= render 'index_row', reports: Report.starting(@start_date).where(country: @countries).order("date(reported_at)").group("date(reported_at)"), country: nil %>
+    <% if @page == 1 %>
+      <%= render 'index_row', reports: Report.starting(@start_date).where(country: @countries).order("date(reported_at)").group("date(reported_at)"), country: nil %>
+    <% end %>
 
     <% @countries.each do |country| %>
       <%= cache [@start_date, country] do %>
@@ -28,4 +30,19 @@
       <% end %>
     <% end %>
   </tbody>
+
+  <tfoot>
+    <tr>
+      <td colspan='10' style='text-align: center;'>
+        <% if @page > 1 %>
+          <%= link_to '&larr; Previous Page'.html_safe, url_for(page: @page - 1) %>
+          <% if @countries.size == @per_page %> | <% end %>
+        <% end %>
+
+        <% if @countries.size == @per_page %>
+          <%= link_to '&rarr; Next Page'.html_safe, url_for(page: @page + 1) %>
+        <% end %>
+      </td>
+    </tr>
+  </tfoot>
 </table>

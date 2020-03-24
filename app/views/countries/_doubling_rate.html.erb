@@ -11,7 +11,7 @@
       name: 'Exact',
       data: <%= values.each_with_index.map do |val, i|
                   next nil if i == 0
-                  growth_rate = p(val) / p((values[i-1] == 0 ? 1 : values[i-1]).to_f)
+                  growth_rate = val / (values[i-1] == 0 ? 1 : values[i-1]).to_f
                   doubling_rate = Math.log(2) / Math.log(growth_rate)
                   doubling_rate = doubling_rate&.infinite? ? nil : doubling_rate
                   doubling_rate && ('%0.2f' % doubling_rate).to_f

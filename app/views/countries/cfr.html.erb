@@ -1,3 +1,22 @@
+<p>
+  Case fatality rate is normally defined as the ratio of the number of deaths
+  to the total number of cases. In an epidemic that has concluded, it is the
+  most accurate estimate of the lethality of the disease. In an epidemic still
+  in progress, it really represents a <i>lower bound</i> because it considers
+  cases which have just been discovered but which have not yet run their
+  course.
+</p>
+<p>
+  There are two other metrics given below, called <b>adjusted CFR</b>.
+  Because there is a delay between onset of symptoms and fatality, it may
+  be helpful to consider a ratio of the total number of deaths to date to
+  the number of cases present at the approximate time those deaths began
+  showing symptoms. This technique
+  <a href="https://www.thelancet.com/journals/laninf/article/PIIS1473-3099(20)30195-X/fulltext" target="_blank">was published in The Lancet</a>
+  using a period of 14 days. On this chart, periods of
+  both 10 and 14 days are used.
+</p>
+
 <div id='container' style='height: 90%;'>
 </div>
 
@@ -8,42 +27,11 @@
     },
 
     <% if !@country %>
-      title: { text: 'COVID-19 Fatality rate (total deaths / total cases) over time' },
+      title: { text: 'COVID-19 Fatality rates over time' },
     <% else %>
-      title: { text: 'COVID-19 Fatality rate (total deaths / total cases) over time in <%= @country.name %>' },
+      title: { text: 'COVID-19 Fatality rates over time in <%= @country.name %>' },
     <% end %>
 
-    xAxis: { categories: <%= @deaths.keys.to_json.html_safe %> },
-    yAxis: {
-      title: null,
-      labels: {
-        formatter: function(a) { return ""+(parseInt(a.value * 10000) / 100) + "%"; }
-      }
-    },
-
-    plotOptions: {
-      area: {
-        stacking: 'normal',
-        lineColor: "#666666",
-        lineWidth: 1,
-        marker: {
-          lineWidth: 1,
-          lineColor: "#666666"
-        }
-      }
-    },
-
-    tooltip: {
-      split: true,
-      valueSuffix: ' fatality rate',
-      formatter: function(a) { return ""+(parseInt(this.y * 10000) / 100) + "%"; }
-    },
-
-    credits: { enabled: false },
-
-    series: [{
-      name: 'Fatality Rate (%)',
-      data: <%= sd = sa = 0; @deaths.map { |k, d| sa += @cases[k].to_f; sd += d.to_f; sd / sa }.to_json.html_safe %>
-    }]
+    <%= render 'cfr', reports: @reports %>
   });
 </script>

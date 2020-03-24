@@ -12,7 +12,12 @@ class CountriesController < ApplicationController
       end
     end
     # select only the top 30 countries matched in this way
-    # @countries = @countries[0...30]
+    page = params[:page] ? params[:page].to_i - 1 : 0
+    @per_page = 20
+    @page = page + 1
+    start = page * @per_page
+    stop = start + @per_page
+    @countries = @countries[start...stop]
   end
 
   def doubling_rate
@@ -72,14 +77,10 @@ class CountriesController < ApplicationController
 
   def cfr
     if params[:id]
-      @country    = Country.find params[:id]
-      @cases      = @country.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)').sum(:cases)
-      @deaths     = @country.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)').sum(:deaths)
-      @recoveries = @country.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)').sum(:recovered)
+      @country = Country.find params[:id]
+      @reports = @country.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)')
     else
-      @cases      = countries.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)').sum(:cases)
-      @deaths     = countries.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)').sum(:deaths)
-      @recoveries = countries.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)').sum(:recovered)
+      @reports = countries.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)')
     end
   end
 
@@ -93,7 +94,7 @@ class CountriesController < ApplicationController
       @country = Country.find params[:id]
       @reports = @country.reports.starting(@start_date)
     else
-      @reports = Report.starting(@start_date)
+      @reports = countries.reports.starting(@start_date)
     end
     render :stacked
   end

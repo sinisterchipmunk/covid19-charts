@@ -1,6 +1,6 @@
 <%
-  cases  = reports.sum(:cases)
-  deaths = reports.sum(:deaths)
+  cases  = reports.sum(:cum_cases)
+  deaths = reports.sum(:cum_deaths)
 %>
 
 chart: {
@@ -64,7 +64,7 @@ plotOptions: {
 },
 
 tooltip: {
-  formatter: function(a) { return ""+(parseInt(this.y * 10000) / 100) + "%"; },
+  valueSuffix: '%',
   <% if defined?(small) && small %>
     hideDelay: 0,
     outside: true,
@@ -75,6 +75,18 @@ tooltip: {
 credits: { enabled: false },
 
 series: [{
-  name: 'Fatality Rate (%)',
-  data: <%= sd = sa = 0; deaths.map { |k, d| sa += cases[k].to_f; sd += d.to_f; sd / sa }.to_json.html_safe %>
+  name: 'CFR %',
+  data: <%= deaths.map { |k, d| cases[k] && ('%0.2f' % (d / cases[k].to_f * 100)).to_f }.to_json.html_safe %>
+}, {
+  name: 'Adjusted CFR % (10 days)',
+  data: <%= deaths.values.each_with_index.map do |d, i|
+    c = cases.values[i - 10]
+    i >= 10 && c.to_f > 0 ? ('%0.2f' % (d / c.to_f * 100)).to_f : nil
+  end.to_json.html_safe %>
+}, {
+  name: 'Adjusted CFR % (14 days)',
+  data: <%= deaths.values.each_with_index.map do |d, i|
+    c = cases.values[i - 14]
+    i >= 14 && c.to_f > 0 ? ('%0.2f' % (d / c.to_f * 100)).to_f : nil
+  end.to_json.html_safe %>
 }]

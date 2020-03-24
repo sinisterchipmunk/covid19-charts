@@ -21,49 +21,55 @@
   </head>
 
   <body>
-    <h4>
+    <h4 style='text-align: center;'>
       <%= link_to 'All Countries', countries_path %> |
       <% if @country %>
-        <%= link_to "#{@country.name} Cumulative", cumulative_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
+        <%= link_to "#{@country.name} Cumulative", cumulative_country_path(@country, china: params[:china], start_date: params[:start_date], page: params[:page]) %> |
         <% if @country.population %>
-          <%= link_to "#{@country.name} Cum. Per Million", cumulative_per_million_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
+          <%= link_to "#{@country.name} Cum. Per Million", cumulative_per_million_country_path(@country, china: params[:china], start_date: params[:start_date], page: params[:page]) %> |
         <% end %>
-        <%= link_to "#{@country.name} Cases Per Day", cases_per_day_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
-        <%= link_to "#{@country.name} Change in Cases/Day", acceleration_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
-        <%= link_to "#{@country.name} Fatalities %", cfr_country_path(@country, china: params[:china], start_date: params[:start_date]) %>
-        <%= link_to "#{@country.name} Doubling Rate", doubling_rate_country_path(@country, china: params[:china], start_date: params[:start_date]) %>
+        <%= link_to "#{@country.name} Cases Per Day", cases_per_day_country_path(@country, china: params[:china], start_date: params[:start_date], page: params[:page]) %> |
+        <%= link_to "#{@country.name} Change in Cases/Day", acceleration_country_path(@country, china: params[:china], start_date: params[:start_date], page: params[:page]) %> |
+        <%= link_to "#{@country.name} Fatalities %", cfr_country_path(@country, china: params[:china], start_date: params[:start_date], page: params[:page]) %>
+        <%= link_to "#{@country.name} Doubling Rate", doubling_rate_country_path(@country, china: params[:china], start_date: params[:start_date], page: params[:page]) %>
       <% else %>
-        <%= link_to 'Heatmap', heatmap_countries_path(china: params[:china], start_date: params[:start_date]) %> |
-        <%= link_to 'Global Cumulative', cumulative_countries_path(china: params[:china], start_date: params[:start_date]) %> |
-        <%= link_to "Global Cum. Cases Per Million", cumulative_per_million_countries_path(china: params[:china], start_date: params[:start_date]) %> |
-        <%= link_to 'Global Cases Per Day', cases_per_day_countries_path(china: params[:china], start_date: params[:start_date]) %> |
-        <%= link_to "Global Change in Cases/Day", acceleration_countries_path(china: params[:china], start_date: params[:start_date]) %> |
-        <%= link_to 'Global Fatalities %', cfr_countries_path(china: params[:china], start_date: params[:start_date]) %> |
-        <%= link_to 'Global Doubling Rate', doubling_rate_countries_path(china: params[:china], start_date: params[:start_date]) %>
+        <%= link_to 'Heatmap', heatmap_countries_path(china: params[:china], start_date: params[:start_date], page: params[:page]) %> |
+        <%= link_to 'Global Cumulative', cumulative_countries_path(china: params[:china], start_date: params[:start_date], page: params[:page]) %> |
+        <%= link_to "Global Cum. Cases Per Million", cumulative_per_million_countries_path(china: params[:china], start_date: params[:start_date], page: params[:page]) %> |
+        <%= link_to 'Global Cases Per Day', cases_per_day_countries_path(china: params[:china], start_date: params[:start_date], page: params[:page]) %> |
+        <%= link_to "Global Change in Cases/Day", acceleration_countries_path(china: params[:china], start_date: params[:start_date], page: params[:page]) %> |
+        <%= link_to 'Global Fatalities %', cfr_countries_path(china: params[:china], start_date: params[:start_date], page: params[:page]) %> |
+        <%= link_to 'Global Doubling Rate', doubling_rate_countries_path(china: params[:china], start_date: params[:start_date], page: params[:page]) %>
       <% end %>
     </h4>
-    <h5>
+    <h5 style='text-align: center;'>
         <% if params[:china] %>
-          <%= link_to 'Omit China', url_for(china: nil, start_date: params[:start_date]) %>
+          <%= link_to 'Omit China', url_for(china: nil, start_date: params[:start_date], page: params[:page]) %>
         <% else %>
-          <%= link_to 'Include China', url_for(china: true, start_date: params[:start_date]) %>
+          <%= link_to 'Include China', url_for(china: true, start_date: params[:start_date], page: params[:page]) %>
         <% end %>
         &mdash;
         Starting from <%= @start_date %> |
-        <%= link_to "1y", url_for(china: params[:china], start_date: 1.year.ago.to_date) %> |
-        <%= link_to "1m", url_for(china: params[:china], start_date: 1.month.ago.to_date) %> |
-        <%= link_to "2w", url_for(china: params[:china], start_date: 2.weeks.ago.to_date) %> |
-        <%= link_to "1w", url_for(china: params[:china], start_date: 1.week.ago.to_date) %>
+        <%= link_to "1y", url_for(china: params[:china], page: params[:page], start_date: 1.year.ago.to_date) %> |
+        <%= link_to "1m", url_for(china: params[:china], page: params[:page], start_date: 1.month.ago.to_date) %> |
+        <%= link_to "2w", url_for(china: params[:china], page: params[:page], start_date: 2.weeks.ago.to_date) %> |
+        <%= link_to "1w", url_for(china: params[:china], page: params[:page], start_date: 1.week.ago.to_date) %>
     </h5>
-    <p>
-      <b>
-        Tracking COVID-19 statistics by country over time.
-      </b>
-      All data was provided by <a href='https://github.com/CSSEGISandData/COVID-19'>Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)</a>.
-    </p>
-    <p>
-      Please report issues with this application at <%= link_to 'https://github.com/sinisterchipmunk/covid19-charts/issues', 'https://github.com/sinisterchipmunk/covid19-charts/issues' %>.
-    </p>
-    <%= yield %>
+    <div class='content'>
+      <p class='center'>
+        <b>
+          Tracking COVID-19 statistics by country over time.
+        </b>
+      </p>
+      <%= yield %>
+    </div>
+    <div class='footer'>
+      <p>
+        All data was provided by <a href='https://github.com/CSSEGISandData/COVID-19'>Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)</a>.
+      </p>
+      <p>
+        Please report issues with this application at <%= link_to 'https://github.com/sinisterchipmunk/covid19-charts/issues', 'https://github.com/sinisterchipmunk/covid19-charts/issues' %>.
+      </p>
+    </div>
   </body>
 </html>
