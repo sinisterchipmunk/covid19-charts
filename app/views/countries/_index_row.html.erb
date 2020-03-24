@@ -1,0 +1,103 @@
+<tr>
+  <td><%= country ? country.name : 'Worldwide' %></td>
+  <td>
+    <%= link_to url_for(id: country&.id, action: :cumulative, china: params[:china], start_date: params[:start_date]) do %>
+      <div id='cumulative-<%= country&.id %>' style='height: 2em;'></div>
+    <% end %>
+
+    <script>
+      Highcharts.chart('cumulative-<%= country&.id %>', {
+        title: { text: "" },
+        legend: { enabled: false },
+        series: [{
+          name: 'Cases',
+          data: <%= reports.sum(:cum_cases).values.to_json.html_safe %>,
+          color: '#CC9900'
+        }, {
+          name: 'Recoveries',
+          data: <%= reports.sum(:cum_recovered).values.to_json.html_safe %>,
+          color: '#00AA00'
+        }, {
+          name: 'Deaths',
+          data: <%= reports.sum(:cum_deaths).values.to_json.html_safe %>,
+          color: '#AA0000'
+        }],
+        <%= render 'areaspline', reports: reports, small: true %>
+      });
+    </script>
+  </td>
+  <td>
+    <% if country.nil? || country.population %>
+      <%= link_to url_for(id: country&.id, action: :cumulative_per_million, china: params[:china], start_date: params[:start_date]) do %>
+        <div id='cum_per_mil-<%= country&.id %>' style='height: 2em;'></div>
+      <% end %>
+      <%= render 'cumulative_per_million', country: country, population: country ? country.population : 7_800_000_000, reports: reports, small: true %>
+    <% else %>
+      <b>N/A</b>
+    <% end %>
+  </td>
+  <td>
+    <%= link_to url_for(id: country&.id, action: :cases_per_day, china: params[:china], start_date: params[:start_date]) do %>
+      <div id='cases_per_day-<%= country&.id %>' style='height: 2em;'></div>
+    <% end %>
+
+    <script>
+      Highcharts.chart('cases_per_day-<%= country&.id %>', {
+        title: { text: "" },
+        legend: { enabled: false },
+        series: [{
+          name: 'Cases',
+          data: <%= reports.sum(:cases).values.to_json.html_safe %>,
+          color: '#CC9900'
+        }, {
+          name: 'Recoveries',
+          data: <%= reports.sum(:recovered).values.to_json.html_safe %>,
+          color: '#00AA00'
+        }, {
+          name: 'Deaths',
+          data: <%= reports.sum(:deaths).values.to_json.html_safe %>,
+          color: '#AA0000'
+        }],
+        <%= render 'areaspline', reports: reports, small: true %>
+      });
+    </script>
+  </td>
+  <td>
+    <%= link_to url_for(id: country&.id, action: :acceleration, china: params[:china], start_date: params[:start_date]) do %>
+      <div id='acceleration-<%= country&.id %>' style='height: 2em;'></div>
+    <% end %>
+
+    <script>
+      Highcharts.chart('acceleration-<%= country&.id %>', {
+        title: { text: "" },
+        legend: { enabled: false },
+        series: [{
+          name: 'Cases reported vs yesterday',
+          data: <%= reports.sum(:accel_cases).values.to_json.html_safe %>,
+          color: '#00AA00',
+          negativeColor: '#AA0000',
+        }],
+        <%= render 'areaspline', reports: reports, small: true %>
+      });
+    </script>
+  </td>
+  <td>
+    <%= link_to url_for(id: country&.id, action: :cfr, china: params[:china], start_date: params[:start_date]) do %>
+      <div id='cfr-<%= country&.id %>' style='height: 2em;'></div>
+    <% end %>
+
+    <script>
+      Highcharts.chart('cfr-<%= country&.id %>', {
+        title: { text: "" },
+        legend: { enabled: false },
+        <%= render 'cfr', reports: reports, small: true %>
+      });
+    </script>
+  </td>
+  <td>
+    <%= link_to url_for(id: country&.id, action: :doubling_rate, china: params[:china], start_date: params[:start_date]) do %>
+      <div id='doubling-<%= country&.id %>' style='height: 2em;'></div>
+    <% end %>
+    <%= render 'doubling_rate', country: country, reports: reports, small: true %>
+  </td>
+</tr>

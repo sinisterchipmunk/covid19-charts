@@ -3,7 +3,7 @@
   <b><%= number_to_human @population %></b>.
 </p>
 
-<div id='cum_per_mil-<%= @country ? @country.id : 0 %>' style='height: 90%;'>
+<div id='cum_per_mil-<%= @country&.id %>' style='height: 90%;'>
 </div>
 
 <%= render 'cumulative_per_million', population: @population,

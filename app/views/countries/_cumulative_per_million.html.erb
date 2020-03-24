@@ -1,7 +1,7 @@
 <% pop_quotient = population / 1_000_000.0 %>
 
 <script>
-  Highcharts.chart('cum_per_mil-<%= country ? country.id : 0 %>', {
+  Highcharts.chart('cum_per_mil-<%= country&.id %>', {
     title: { text: <%= (defined?(title) ? title : '').to_json.html_safe %> },
     <% if defined?(small) && small %>
       legend: { enabled: false },

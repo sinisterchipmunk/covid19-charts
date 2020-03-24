@@ -11,6 +11,17 @@ class CountriesController < ApplicationController
         a.reports.starting(@start_date).sum(:cases)
       end
     end
+    # select only the top 30 countries matched in this way
+    # @countries = @countries[0...30]
+  end
+
+  def doubling_rate
+    if params[:id]
+      @country = Country.find params[:id]
+      @reports = @country.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)')
+    else
+      @reports = countries.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)')
+    end
   end
 
   def heatmap
@@ -28,11 +39,6 @@ class CountriesController < ApplicationController
     # @countries = @countries[0...40]
     @dates = Report.starting(@start_date).pluck(:reported_at).map(&:to_date).uniq.sort
     @metric = :cases
-  end
-
-  def cumulative
-    @reports = countries.reports.where("reported_at >= ?", @start_date)
-    render :stacked
   end
 
   def cumulative_per_million
@@ -67,13 +73,13 @@ class CountriesController < ApplicationController
   def cfr
     if params[:id]
       @country    = Country.find params[:id]
-      @cases      = @country.reports.starting(@start_date).group('date(reported_at)').sum(:cases)
-      @deaths     = @country.reports.starting(@start_date).group('date(reported_at)').sum(:deaths)
-      @recoveries = @country.reports.starting(@start_date).group('date(reported_at)').sum(:recovered)
+      @cases      = @country.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)').sum(:cases)
+      @deaths     = @country.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)').sum(:deaths)
+      @recoveries = @country.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)').sum(:recovered)
     else
-      @cases      = countries.reports.starting(@start_date).group('date(reported_at)').sum(:cases)
-      @deaths     = countries.reports.starting(@start_date).group('date(reported_at)').sum(:deaths)
-      @recoveries = countries.reports.starting(@start_date).group('date(reported_at)').sum(:recovered)
+      @cases      = countries.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)').sum(:cases)
+      @deaths     = countries.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)').sum(:deaths)
+      @recoveries = countries.reports.starting(@start_date).group('date(reported_at)').order('date(reported_at)').sum(:recovered)
     end
   end
 
@@ -82,9 +88,13 @@ class CountriesController < ApplicationController
   def show
   end
 
-  def totals
-    @country = Country.find params[:id]
-    @reports = Country.find(params[:id]).reports.starting(@start_date)
+  def cumulative
+    if params[:id]
+      @country = Country.find params[:id]
+      @reports = @country.reports.starting(@start_date)
+    else
+      @reports = Report.starting(@start_date)
+    end
     render :stacked
   end
 

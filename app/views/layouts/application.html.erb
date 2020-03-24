@@ -21,26 +21,28 @@
   </head>
 
   <body>
-    <h2>
+    <h4>
       <%= link_to 'All Countries', countries_path %> |
       <% if @country %>
-        <%= link_to "#{@country.name} Cumulative", totals_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
+        <%= link_to "#{@country.name} Cumulative", cumulative_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
         <% if @country.population %>
           <%= link_to "#{@country.name} Cum. Per Million", cumulative_per_million_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
         <% end %>
         <%= link_to "#{@country.name} Cases Per Day", cases_per_day_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
-        <%= link_to "#{@country.name} Acceleration", acceleration_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
+        <%= link_to "#{@country.name} Change in Cases/Day", acceleration_country_path(@country, china: params[:china], start_date: params[:start_date]) %> |
         <%= link_to "#{@country.name} Fatalities %", cfr_country_path(@country, china: params[:china], start_date: params[:start_date]) %>
+        <%= link_to "#{@country.name} Doubling Rate", doubling_rate_country_path(@country, china: params[:china], start_date: params[:start_date]) %>
       <% else %>
         <%= link_to 'Heatmap', heatmap_countries_path(china: params[:china], start_date: params[:start_date]) %> |
         <%= link_to 'Global Cumulative', cumulative_countries_path(china: params[:china], start_date: params[:start_date]) %> |
         <%= link_to "Global Cum. Cases Per Million", cumulative_per_million_countries_path(china: params[:china], start_date: params[:start_date]) %> |
         <%= link_to 'Global Cases Per Day', cases_per_day_countries_path(china: params[:china], start_date: params[:start_date]) %> |
-        <%= link_to "Global Acceleration", acceleration_countries_path(china: params[:china], start_date: params[:start_date]) %> |
-        <%= link_to 'Global Fatalities %', cfr_countries_path(china: params[:china], start_date: params[:start_date]) %>
+        <%= link_to "Global Change in Cases/Day", acceleration_countries_path(china: params[:china], start_date: params[:start_date]) %> |
+        <%= link_to 'Global Fatalities %', cfr_countries_path(china: params[:china], start_date: params[:start_date]) %> |
+        <%= link_to 'Global Doubling Rate', doubling_rate_countries_path(china: params[:china], start_date: params[:start_date]) %>
       <% end %>
-    </h2>
-    <h3>
+    </h4>
+    <h5>
         <% if params[:china] %>
           <%= link_to 'Omit China', url_for(china: nil, start_date: params[:start_date]) %>
         <% else %>
@@ -52,7 +54,7 @@
         <%= link_to "1m", url_for(china: params[:china], start_date: 1.month.ago.to_date) %> |
         <%= link_to "2w", url_for(china: params[:china], start_date: 2.weeks.ago.to_date) %> |
         <%= link_to "1w", url_for(china: params[:china], start_date: 1.week.ago.to_date) %>
-    </h3>
+    </h5>
     <p>
       <b>
         Tracking COVID-19 statistics by country over time.

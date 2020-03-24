@@ -1,0 +1,35 @@
+<p>
+  The <b>doubling rate</b> is the approximate number of days it takes for the
+  number of reported cases to double, based on the growth rate. Here it is
+  shown with Exact, simple moving average (SMA), and exponential moving average
+  (EMA) measurements. Scroll down for the specifics of this algorithm.
+</p>
+<p>
+  The doubling rate will be higher in countries where
+  spread is slower, and it will be lower in countries where COVID-19 is
+  spreading more rapidly.
+</p>
+
+<div id='doubling-<%= @country&.id %>' style='height: 90%;'>
+</div>
+
+<%= render 'doubling_rate', country: @country,
+                            reports: @reports,
+                            title: "Doubling Rate (in days)#{@country ? " for #{@country.name}" : " Worldwide"}" %>
+
+<p>
+  To estimate the doubling rate, the following algorithm is applied:
+
+  <ol>
+    <li>A <b>growth rate</b> is defined as <code>(cases today / cases yesterday)</code>.</li>
+    <li>The exact daily estimate for doubling rate is defined as
+      <code>(log(2) / log(growth rate))</code>, which represents how many times the growth rate must be multiplied by itself to reach the value <code>2.0</code>.</li>
+    <li>
+      The simple moving average is found by taking the sum of the growth rates of the last 4 days plus the day being evaluated, then dividing by 5. The doubling rate is then calculated from this average.
+    </li>
+    <li>
+      The exponential moving average is found by applying the growth rate to a 5 day EMA. The doubling rate is then calculated from this average.
+    </li>
+  </ol>
+</p>
+

@@ -1,5 +1,6 @@
 chart: {
-  type: 'areaspline',
+  type: <%= (defined?(type) ? type : 'areaspline').to_json.html_safe %>,
+
   <% if defined?(small) && small %>
     backgroundColor: null,
     borderWidth: 0,
@@ -14,7 +15,7 @@ xAxis: {
   <% if defined?(small) && small %>
     labels: { enabled: false }
   <% else %>
-    categories: <%= reports.distinct.pluck('date(reported_at)').to_json.html_safe %>
+    categories: <%= (defined?(categories) ? categories : reports.distinct.pluck('date(reported_at)')).to_json.html_safe %>
   <% end %>
 },
 
