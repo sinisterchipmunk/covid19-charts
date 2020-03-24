@@ -17,6 +17,7 @@ class CountriesController < ApplicationController
     @page = page + 1
     start = page * @per_page
     stop = start + @per_page
+    @all_countries = @countries # for cumulative charts
     @countries = @countries[start...stop]
   end
 

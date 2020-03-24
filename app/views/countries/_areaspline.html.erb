@@ -15,7 +15,7 @@ xAxis: {
   <% if defined?(small) && small %>
     labels: { enabled: false }
   <% else %>
-    categories: <%= (defined?(categories) ? categories : reports.distinct.pluck('date(reported_at)')).to_json.html_safe %>
+    categories: <%= (defined?(categories) ? categories : reports.order('date(reported_at)').distinct.pluck('date(reported_at)')).to_json.html_safe %>
   <% end %>
 },
 

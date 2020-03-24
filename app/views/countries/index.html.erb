@@ -20,7 +20,7 @@
 
   <tbody>
     <% if @page == 1 %>
-      <%= render 'index_row', reports: Report.starting(@start_date).where(country: @countries).order("date(reported_at)").group("date(reported_at)"), country: nil %>
+      <%= render 'index_row', reports: Report.starting(@start_date).where(country: @all_countries).order("date(reported_at)").group("date(reported_at)"), country: nil %>
     <% end %>
 
     <% @countries.each do |country| %>
