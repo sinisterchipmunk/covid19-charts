@@ -25,7 +25,7 @@ xAxis: {
 yAxis: {
   title: null,
   labels: {
-    formatter: function(a) { return ""+(parseInt(a.value * 10000) / 100) + "%"; }
+    formatter: function(a) { return a.value.toString() + "%"; }
   }
 },
 
