@@ -62,6 +62,7 @@ class DailyJob < ApplicationJob
                        when 'Cabo Verde'                     then 'Cape Verde'
                        when 'Timor-Leste'                    then 'East Timor'
                        when 'Diamond Princess'               then 'Cruise Ship'
+                       when 'West Bank and Gaza'             then 'Palestine'
                        else country_name
                        end
         country = Country.where(name: country_name).first
@@ -92,13 +93,7 @@ class DailyJob < ApplicationJob
       raise 'one or more countries is missing' if missing_countries.any?
 
       # cache busting and cleanup
-      Country.all.each do |c|
-        if c.reports.empty?
-          c.destroy
-        else
-          c.touch
-        end
-      end
+      Country.touch_all
     end
   end
 end
