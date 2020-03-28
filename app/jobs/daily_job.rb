@@ -63,6 +63,7 @@ class DailyJob < ApplicationJob
                        when 'Timor-Leste'                    then 'East Timor'
                        when 'Diamond Princess'               then 'Cruise Ship'
                        when 'West Bank and Gaza'             then 'Palestine'
+                       when 'Burma'                          then 'Myanmar'
                        else country_name
                        end
         country = Country.where(name: country_name).first
