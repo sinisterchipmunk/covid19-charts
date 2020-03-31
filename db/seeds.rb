@@ -240,3 +240,4 @@ Country.where(name: "Channel Islands").first_or_create!.update!(population: 170_
 Country.where(name: 'Cruise Ship').first_or_create!
 Country.where(name: 'Holy See').first_or_create!
 Country.where(name: 'Kosovo').first_or_create!.update!(population: 1_810_463)
+Country.where(name: 'MS Zaandam (Cruise Ship)').first_or_create!

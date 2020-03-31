@@ -64,6 +64,7 @@ class DailyJob < ApplicationJob
                        when 'Diamond Princess'               then 'Cruise Ship'
                        when 'West Bank and Gaza'             then 'Palestine'
                        when 'Burma'                          then 'Myanmar'
+                       when 'MS Zaandam'                     then 'MS Zaandam (Cruise Ship)'
                        else country_name
                        end
         country = Country.where(name: country_name).first
